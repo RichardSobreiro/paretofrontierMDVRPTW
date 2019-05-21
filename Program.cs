@@ -1,227 +1,85 @@
-﻿// --------------------------------------------------------------------------
-// File: Diet.cs   
-// Version 12.8.0  
-// --------------------------------------------------------------------------
-// Licensed Materials - Property of IBM
-// 5725-A06 5725-A29 5724-Y48 5724-Y49 5724-Y54 5724-Y55 5655-Y21
-// Copyright IBM Corporation 2003, 2017. All Rights Reserved.
-//
-// US Government Users Restricted Rights - Use, duplication or
-// disclosure restricted by GSA ADP Schedule Contract with
-// IBM Corp.
-// --------------------------------------------------------------------------
-//
-// A dietary model.
-//
-// Input data:
-// foodMin[j]          minimum amount of food j to use
-// foodMax[j]          maximum amount of food j to use 
-// foodCost[j]         cost for one unit of food j
-// nutrMin[i]          minimum amount of nutrient i
-// nutrMax[i]          maximum amount of nutrient i
-// nutrPerFood[i][j]   nutrition amount of nutrient i in food j
-//
-// Modeling variables:
-// Buy[j]          amount of food j to purchase
-//
-// Objective:
-// minimize sum(j) Buy[j] * foodCost[j]
-//
-// Constraints:
-// forall foods i: nutrMin[i] <= sum(j) Buy[j] * nutrPer[i][j] <= nutrMax[j]
-//
-
-using ILOG.Concert;
+﻿using ILOG.Concert;
 using ILOG.CPLEX;
 
 
-public class Diet
+public class ParetoFrontier
 {
-    internal class Data
+    internal static int qViagens; // Quantidade de viagens
+    internal static int qPontosCarga; // Quantidade de pontos de carga que podem produzir concreto para atendimento das viagens
+    internal static int qBetoneiras; // Quantidade de betoneiras
+    internal static int M;
+
+    // Conjuntos
+
+    //range I = 1..qViagens;
+    //range K = 1..qPontosCarga;
+    //range B = 1..qBetoneiras;
+
+    // Parâmetros
+
+    internal static double[][] dp; // Tempo gasto para pesagem da viagem v no ponto de carga p
+    internal static double[][] dv; // Tempo gasto no trajeto entre o ponto de carga p e o cliente da viagem i
+    internal static double[] td; // Tempo de descarga no cliente da viagem v
+    internal static double[] tmaxvc; // Tempo maximo de vida do concreto da viagem v
+    internal static double[] hs; // Horario solicitado pelo cliente para chegada da viagem v
+
+    internal static double[][] f; // Faturamento pelo atendimento da viagem v pelo ponto de carga p (Custo dos insumos + Custo rodoviário + Custo de pessoal)
+    internal static double[][] c; // Custo de atendimento da viagem v pelo ponto de carga p (Custo dos insumos + Custo rodoviário + Custo de pessoal)
+
+    internal static double[][] pb; // Se a betoneira b pertence ao ponto de carga p
+
+    internal static void ReadDataFromFile(string fileName)
     {
-        internal int nFoods;
-        internal int nNutrs;
-        internal double[] foodCost;
-        internal double[] foodMin;
-        internal double[] foodMax;
-        internal double[] nutrMin;
-        internal double[] nutrMax;
-        internal double[][] nutrPerFood;
+        InputDataReader reader = new InputDataReader(fileName);
 
-        internal Data(string filename)
-        {
-            InputDataReader reader = new InputDataReader(filename);
+        qViagens = reader.ReadInt();
+        qPontosCarga = reader.ReadInt();
+        qBetoneiras = reader.ReadInt();
+        M = reader.ReadInt();
 
-            foodCost = reader.ReadDoubleArray();
-            foodMin = reader.ReadDoubleArray();
-            foodMax = reader.ReadDoubleArray();
-            nutrMin = reader.ReadDoubleArray();
-            nutrMax = reader.ReadDoubleArray();
-            nutrPerFood = reader.ReadDoubleArrayArray();
+        dp = reader.ReadDoubleArrayArray();
+        dv = reader.ReadDoubleArrayArray();
+        td = reader.ReadDoubleArray();
+        tmaxvc = reader.ReadDoubleArray();
+        hs = reader.ReadDoubleArray();
 
-            nFoods = foodMax.Length;
-            nNutrs = nutrMax.Length;
+        f = reader.ReadDoubleArrayArray();
+        c = reader.ReadDoubleArrayArray();
 
-            if (nFoods != foodMin.Length ||
-                 nFoods != foodMax.Length)
-                throw new ILOG.Concert.Exception("inconsistent data in file " + filename);
-            if (nNutrs != nutrMin.Length ||
-                 nNutrs != nutrPerFood.Length)
-                throw new ILOG.Concert.Exception("inconsistent data in file " + filename);
-            for (int i = 0; i < nNutrs; ++i)
-            {
-                if (nutrPerFood[i].Length != nFoods)
-                    throw new ILOG.Concert.Exception("inconsistent data in file " + filename);
-            }
-        }
+        pb = reader.ReadDoubleArrayArray();
     }
-
-    internal static void BuildModelByRow(IModeler model,
-                                         Data data,
-                                         INumVar[] Buy,
-                                         NumVarType type)
-    {
-        int nFoods = data.nFoods;
-        int nNutrs = data.nNutrs;
-
-        for (int j = 0; j < nFoods; j++)
-        {
-            Buy[j] = model.NumVar(data.foodMin[j], data.foodMax[j], type);
-        }
-        model.AddMinimize(model.ScalProd(data.foodCost, Buy));
-
-        for (int i = 0; i < nNutrs; i++)
-        {
-            model.AddRange(data.nutrMin[i],
-                           model.ScalProd(data.nutrPerFood[i], Buy),
-                           data.nutrMax[i]);
-        }
-    }
-
-    internal static void BuildModelByColumn(IMPModeler model,
-                                            Data data,
-                                            INumVar[] Buy,
-                                            NumVarType type)
-    {
-        int nFoods = data.nFoods;
-        int nNutrs = data.nNutrs;
-
-        IObjective cost = model.AddMinimize();
-        IRange[] constraint = new IRange[nNutrs];
-
-        for (int i = 0; i < nNutrs; i++)
-        {
-            constraint[i] = model.AddRange(data.nutrMin[i], data.nutrMax[i]);
-        }
-
-        for (int j = 0; j < nFoods; j++)
-        {
-            Column col = model.Column(cost, data.foodCost[j]);
-            for (int i = 0; i < nNutrs; i++)
-            {
-                col = col.And(model.Column(constraint[i], data.nutrPerFood[i][j]));
-            }
-            Buy[j] = model.NumVar(col, data.foodMin[j], data.foodMax[j], type);
-        }
-    }
-
 
     public static void Main(string[] args)
     {
-
         try
         {
-            string filename = "C:/Users/Richard Sobreiro/source/repos/ParetoFrontier_MDVRPTW/ParetoFrontier_MDVRPTW/diet.dat";
-            bool byColumn = false;
-            NumVarType varType = NumVarType.Float;
+            string filename = "";
+            ReadDataFromFile(filename);
 
-            for (int i = 0; i < args.Length; i++)
-            {
-                if (args[i].ToCharArray()[0] == '-')
-                {
-                    switch (args[i].ToCharArray()[1])
-                    {
-                        case 'c':
-                            byColumn = true;
-                            break;
-                        case 'i':
-                            varType = NumVarType.Int;
-                            break;
-                        default:
-                            Usage();
-                            return;
-                    }
-                }
-                else
-                {
-                    filename = args[i];
-                    break;
-                }
-            }
-
-            Data data = new Data(filename);
-            int nFoods = data.nFoods;
-            int nNutrs = data.nNutrs;
-
-            // Build model
             Cplex cplex = new Cplex();
-            INumVar[] Buy = new INumVar[nFoods];
 
-            if (byColumn) BuildModelByColumn(cplex, data, Buy, varType);
-            else BuildModelByRow(cplex, data, Buy, varType);
+            //Variables
+            INumVar[] tfp = new INumVar[qViagens];
+            INumVar[] tfb = new INumVar[qViagens];
+            INumVar[] hcc = new INumVar[qViagens];
 
-            // Solve model
+            INumVar[][][] x;
+            for(var i = 0; i < qViagens; i++)
 
-            if (cplex.Solve())
-            {
-                System.Console.WriteLine();
-                System.Console.WriteLine("Solution status = " + cplex.GetStatus());
-                System.Console.WriteLine();
-                System.Console.WriteLine(" cost = " + cplex.ObjValue);
-                for (int i = 0; i < nFoods; i++)
-                {
-                    System.Console.WriteLine(" Buy" + i + " = " + cplex.GetValue(Buy[i]));
-                }
-                System.Console.WriteLine();
-            }
-            cplex.End();
+            //dvar boolean y[I][I][B]; // Se a betoneira b atende a viagem j após a viagem i
+
         }
-        catch (ILOG.Concert.Exception ex)
+        catch (ILOG.Concert.Exception exc)
         {
-            System.Console.WriteLine("Concert Error: " + ex);
+            System.Console.WriteLine("Concert exception '" + exc + "' caught");
         }
-        catch (InputDataReader.InputDataReaderException ex)
+        catch (System.IO.IOException exc)
         {
-            System.Console.WriteLine("Data Error: " + ex);
+            System.Console.WriteLine("Error reading file " + args[0] + ": " + exc);
         }
-        catch (System.IO.IOException ex)
+        catch (InputDataReader.InputDataReaderException exc)
         {
-            System.Console.WriteLine("IO Error: " + ex);
+            System.Console.WriteLine(exc);
         }
-    }
-
-    internal static void Usage()
-    {
-        System.Console.WriteLine(" ");
-        System.Console.WriteLine("usage: Diet [options] <data file>");
-        System.Console.WriteLine("options: -c  build model by column");
-        System.Console.WriteLine("         -i  use integer variables");
-        System.Console.WriteLine(" ");
     }
 }
-
-/*  Sample output
-
-Solution status = Optimal
-
-cost   = 14.8557
-  Buy0 = 4.38525
-  Buy1 = 0
-  Buy2 = 0
-  Buy3 = 0
-  Buy4 = 0
-  Buy5 = 6.14754
-  Buy6 = 0
-  Buy7 = 3.42213
-  Buy8 = 0
-*/
