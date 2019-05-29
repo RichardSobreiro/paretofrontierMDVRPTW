@@ -5,15 +5,13 @@ namespace ParetoFrontier_MDVRPTW
 {
     public static class MaximizeProfit
     {
-        public static void Solve(Parameters parameters)
+        public static SolutionReturn Solve(Parameters parameters)
         {
+            SolutionReturn solutionReturn = new SolutionReturn();
             try
             {
-                parameters.ReadDataFromFile(parameters.filename);
-
                 using (Cplex cplex = new Cplex())
                 {
-
                     //Variables
                     INumVar[] atrc = cplex.NumVarArray(parameters.qViagens, 0.0, double.MaxValue);
                     INumVar[] avnc = cplex.NumVarArray(parameters.qViagens, 0.0, double.MaxValue);
@@ -27,6 +25,8 @@ namespace ParetoFrontier_MDVRPTW
                     IIntVar[][][] y = new IIntVar[parameters.qViagens][][];
                     IIntVar[][] vp = new IIntVar[parameters.qViagens][];
                     IIntVar[][] vb = new IIntVar[parameters.qViagens][];
+
+                    IIntVar qtdvnap = cplex.IntVar(0, int.MaxValue, "qtdvnap");
 
                     for (var i = 0; i < parameters.qViagens; i++)
                     {
@@ -52,6 +52,19 @@ namespace ParetoFrontier_MDVRPTW
                     {
                         vb[i] = cplex.BoolVarArray(parameters.qBetoneiras);
                     }
+
+                    //QuantidadeViagensNaoAtendidades:
+                    //qtdvnap <= 30;
+                    //qtdvnap == (qViagens - sum(v in I, p in K)(vp[v][p]));
+                    ILinearNumExpr sumvp = cplex.LinearNumExpr();
+                    for (int v = 0; v < parameters.qViagens; v++)
+                    {
+                        for (int p = 0; p < parameters.qPontosCarga; p++)
+                        {
+                            sumvp.AddTerm(1, vp[v][p]);
+                        }
+                    }
+                    cplex.AddEq(qtdvnap, cplex.Diff(parameters.qViagens, sumvp));
 
                     //ViagemNaoPodeSucederElaMesmaNaPesagem:
                     //forall(i in I, j in I, k in K : i == j){
@@ -403,27 +416,35 @@ namespace ParetoFrontier_MDVRPTW
                     {
                         System.Console.WriteLine("Solution status = " + cplex.GetStatus());
                         System.Console.WriteLine(" Optimal Value = " + cplex.ObjValue);
+                        solutionReturn.Function1ObjValue = cplex.ObjValue;
                     }
 
                     if (cplex.GetStatus().Equals(Cplex.Status.Infeasible))
                     {
                         System.Console.WriteLine("No Solution");
-                        return;
                     }
+
+                    solutionReturn.Status = cplex.GetStatus();
+
                     cplex.End();
+
+                    return solutionReturn;
                 }
             }
             catch (ILOG.Concert.Exception exc)
             {
                 System.Console.WriteLine("Concert exception '" + exc + "' caught");
+                return solutionReturn;
             }
             catch (System.IO.IOException exc)
             {
                 System.Console.WriteLine("Error reading file " + parameters.filename + ": " + exc);
+                return solutionReturn;
             }
             catch (InputDataReader.InputDataReaderException exc)
             {
                 System.Console.WriteLine(exc);
+                return solutionReturn;
             }
         }
     }

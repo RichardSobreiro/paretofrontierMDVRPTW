@@ -2,12 +2,13 @@
 {
     public class Parameters
     {
-        public Parameters(int _qViagens, int _qPontosCarga, int _qBetoneiras, int _M)
+        public Parameters(int _qViagens, int _qPontosCarga, int _qBetoneiras, int _M, int? _qtdvnap = null)
         {
             qViagens = _qViagens;
             qPontosCarga = _qPontosCarga;
             qBetoneiras = _qBetoneiras;
             M = _M;
+            qtdvnap = _qtdvnap;
         }
         public void ReadDataFromFile(string fileName)
         {
@@ -31,6 +32,8 @@
         }
 
         internal string filename = "./Data.dat";
+
+        internal int? qtdvnap; // Quantidade maxima de viagens nao atendidas
 
         internal int qViagens; // Quantidade de viagens
         internal int qPontosCarga; // Quantidade de pontos de carga que podem produzir concreto para atendimento das viagens

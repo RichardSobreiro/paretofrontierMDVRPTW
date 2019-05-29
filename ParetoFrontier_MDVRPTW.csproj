@@ -82,11 +82,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CrossCutting.cs" />
+    <Compile Include="SolutionReturn.cs" />
     <None Include="DataOptimizationStudio.dat" />
     <Compile Include="GenerateParameters.cs" />
     <Compile Include="InstanceProblemGenerator.cs" />
     <Compile Include="InputDataReader.cs" />
     <Compile Include="MaximizeProfit.cs" />
+    <Compile Include="Method.cs" />
     <Compile Include="Parameters.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
