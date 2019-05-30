@@ -361,5 +361,52 @@ namespace ParetoFrontier_MDVRPTW
                 optimizationStudioDataFile.Write(text);
             }
         }
+
+        public static double[] GetDoubleArray(int size)
+        {
+            double[] matrix = new double[size];
+            return matrix;
+        }
+
+        public static int[] GetIntArrayArray(int size)
+        {
+            int[] matrix = new int[size];
+            return matrix;
+        }
+
+        public static int[][] GetIntArrayArray(int rows, int columns)
+        {
+            int[][] matrix = new int[rows][];
+            for (int i = 0; i < rows; i++)
+            {
+                matrix[i] = new int[columns];
+            }
+            return matrix;
+        }
+
+        public static double[][] GetDoubleArrayArray(int rows, int columns)
+        {
+            double[][] matrix = new double[rows][];
+            for (int i = 0; i < rows; i++)
+            {
+                matrix[i] = new double[columns];
+            }
+            return matrix;
+        }
+
+        public static double[][][] GenerateArrayArrayArray(double[][][] matrix, 
+            int dim1, int dim2, int dim3)
+        {
+            matrix = new double[dim1][][];
+            for (int i = 0; i < dim1; i++)
+            {
+                matrix[i] = new double[dim2][];
+                for (int j = 0; j < dim2; j++)
+                {
+                    matrix[i][j] = new double[dim3];
+                }
+            }
+            return matrix;
+        }
     }
 }

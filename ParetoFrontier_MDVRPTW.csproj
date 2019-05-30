@@ -82,6 +82,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CrossCutting.cs" />
+    <Compile Include="Methods\ERestricted.cs" />
+    <Compile Include="Results\PrintResults.cs" />
     <Compile Include="SolutionReturn.cs" />
     <None Include="DataOptimizationStudio.dat" />
     <Compile Include="GenerateParameters.cs" />
@@ -98,5 +100,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -412,11 +412,14 @@ namespace ParetoFrontier_MDVRPTW
 
                     cplex.AddMaximize(profit);
 
+                    cplex.SetParam(Cplex.DoubleParam.TimeLimit, 10.0);
+
                     if (cplex.Solve())
                     {
                         System.Console.WriteLine("Solution status = " + cplex.GetStatus());
                         System.Console.WriteLine(" Optimal Value = " + cplex.ObjValue);
                         solutionReturn.Function1ObjValue = cplex.ObjValue;
+                        solutionReturn.Function2ObjValue = cplex.GetValue(qtdvnap);
                     }
 
                     if (cplex.GetStatus().Equals(Cplex.Status.Infeasible))
@@ -438,7 +441,7 @@ namespace ParetoFrontier_MDVRPTW
             }
             catch (System.IO.IOException exc)
             {
-                System.Console.WriteLine("Error reading file " + parameters.filename + ": " + exc);
+                System.Console.WriteLine("Error reading file " + parameters.dataFilename + ": " + exc);
                 return solutionReturn;
             }
             catch (InputDataReader.InputDataReaderException exc)

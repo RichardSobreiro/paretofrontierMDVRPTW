@@ -31,7 +31,8 @@
             pb = reader.ReadDoubleArrayArray();
         }
 
-        internal string filename = "./Data.dat";
+        internal string dataFilename = "./Data.dat";
+        internal string outputDirectoty = "./Results";
 
         internal int? qtdvnap; // Quantidade maxima de viagens nao atendidas
 

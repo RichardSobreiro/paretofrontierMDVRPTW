@@ -10,7 +10,7 @@
             string path = filename;
             string pathDotnetDatFile = filename;
 
-            InstanceProblemGenerator.Execute(parameters);
+            InstanceProblemGenerator.Generate(parameters);
 
             return parameters;
         }

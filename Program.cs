@@ -1,4 +1,7 @@
 ﻿using ParetoFrontier_MDVRPTW;
+using ParetoFrontier_MDVRPTW.Methods;
+using ParetoFrontier_MDVRPTW.Results;
+using System.Collections.Generic;
 
 public class ParetoFrontier
 {
@@ -7,16 +10,27 @@ public class ParetoFrontier
         int qViagens = 50;
         int qPontosCarga = 1;
         int qBetoneiras = 1;
-        int M = 10;
+        int M = 10000;
         int? qtdvnap = 50;
         GenerateParetoFrontier(Method.E_RESTRICTED, qViagens, qPontosCarga, qBetoneiras, M, qtdvnap);
     }
 
-    public static void  GenerateParetoFrontier(Method method, int _qViagens, 
-        int _qPontosCarga, int _qBetoneiras, int _M, int? _qtdvnap = null)
+    public static void  GenerateParetoFrontier(Method method, int qViagens, 
+        int qPontosCarga, int qBetoneiras, int M, int? qtdvnap = null)
     {
-        Parameters parameters = new Parameters(50, 1, 1, 10000, 50);
-        InstanceProblemGenerator.Generate(parameters);
-        MaximizeProfit.Solve(parameters);
+        Parameters parameters = new Parameters(qViagens, qPontosCarga, qBetoneiras, M, qtdvnap);
+        List<SolutionReturn> solutionReturns = new List<SolutionReturn>();
+
+        switch (method)
+        {
+            case Method.E_RESTRICTED:
+                solutionReturns = ERestricted.Solve(parameters);
+                break;
+            default:
+                solutionReturns = ERestricted.Solve(parameters);
+                break;
+        }
+
+        PrintResults.PrintResultsToFile(solutionReturns, parameters);
     }
 }

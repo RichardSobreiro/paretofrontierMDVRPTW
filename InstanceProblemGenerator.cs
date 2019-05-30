@@ -9,6 +9,8 @@ namespace ParetoFrontier_MDVRPTW
             bool? writeToDotnetDatFile = false, string pathDotnetDatFile = null,
             bool? writeToOptimizationStudioDataFile = false, string pathOptimizationStudioDataFile = null)
         {
+            parameters.dp = CrossCutting.GetDoubleArrayArray(parameters.qViagens, 
+                parameters.qBetoneiras);
             CrossCutting.GenerateMatrixRowsByColumns(parameters.dp, 7, 7, 
                 parameters.qViagens, parameters.qPontosCarga);
             for (int i = 0; i < parameters.qPontosCarga; i++)
