@@ -41,11 +41,11 @@ namespace ParetoFrontier_MDVRPTW
             }
         }
 
-        public static void GenerateMatrixRowsByColumns(double[][] matrix, double min,
+        public static double[][] GenerateMatrixRowsByColumns(double min,
             double max, int rows, int columns, int? controle = null)
         {
             Random random = new Random();
-            matrix = new double[rows][];
+            double[][] matrix = new double[rows][];
             for (int i = 0; i < rows; i++)
             {
                 matrix[i] = new double[columns];
@@ -61,6 +61,7 @@ namespace ParetoFrontier_MDVRPTW
                     }
                 }
             }
+            return matrix;
         }
 
         public static void GenerateMatrixNxNxN(double[][][] matrix, double min,
@@ -136,11 +137,11 @@ namespace ParetoFrontier_MDVRPTW
             }
         }
 
-        public static void GenerateRandomArray(double[] matrix, double min, double max,
+        public static double[] GenerateRandomDoubleArray(double min, double max,
             int size, int? controle = null)
         {
             Random random = new Random();
-            matrix = new double[size];
+            double[] matrix = new double[size];
             for (int i = 0; i < size; i++)
             {
                 if (controle.HasValue && i < controle)
@@ -152,13 +153,14 @@ namespace ParetoFrontier_MDVRPTW
                     matrix[i] = random.NextDouble() * (max - min) + min;
                 }
             }
+            return matrix;
         }
 
-        public static void GenerateRandomArray(int[] matrix, int min, int max,
+        public static int[] GenerateRandomIntArray(int min, int max,
             int size, int? controle = null)
         {
             Random random = new Random();
-            matrix = new int[size];
+            int[] matrix = new int[size];
             for (int i = 0; i < size; i++)
             {
                 if (controle.HasValue && i < controle)
@@ -170,15 +172,15 @@ namespace ParetoFrontier_MDVRPTW
                     matrix[i] = random.Next(min, max);
                 }
             }
+            return matrix;
         }
 
-        public static void Generate01MatrixRowsByColumnsByIntervals(double[][] matrix, 
-            int rows, int columns)
+        public static double[][] Generate01MatrixRowsByColumnsByIntervals(int rows, int columns)
         {
             int step = columns / rows;
             int intervalBegin = 0, intervalEnd = step;
             int controlEnd = 0;
-            matrix = new double[rows][];
+            double[][] matrix = new double[rows][];
             for (int i = 0; i < rows; i++)
             {
                 matrix[i] = new double[columns];
@@ -198,6 +200,7 @@ namespace ParetoFrontier_MDVRPTW
                 intervalBegin = intervalEnd;
                 intervalEnd += step;
             }
+            return matrix;
         }
 
         public static void WriteMatrixNxNxNToFile(StreamWriter file,

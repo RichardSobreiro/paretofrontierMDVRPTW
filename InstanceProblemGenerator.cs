@@ -9,38 +9,36 @@ namespace ParetoFrontier_MDVRPTW
             bool? writeToDotnetDatFile = false, string pathDotnetDatFile = null,
             bool? writeToOptimizationStudioDataFile = false, string pathOptimizationStudioDataFile = null)
         {
-            parameters.dp = CrossCutting.GetDoubleArrayArray(parameters.qViagens, 
-                parameters.qBetoneiras);
-            CrossCutting.GenerateMatrixRowsByColumns(parameters.dp, 7, 7, 
+            parameters.dp = CrossCutting.GenerateMatrixRowsByColumns(7, 7, 
                 parameters.qViagens, parameters.qPontosCarga);
             for (int i = 0; i < parameters.qPontosCarga; i++)
                 parameters.dp[0][i] = 0;
-            
-            CrossCutting.GenerateMatrixRowsByColumns(parameters.dv, 10, 50, 
+
+            parameters.dv = CrossCutting.GenerateMatrixRowsByColumns(10, 50, 
                 parameters.qViagens, parameters.qPontosCarga);
             for (int i = 0; i < parameters.qPontosCarga; i++)
                 parameters.dv[0][i] = 0;
 
-            CrossCutting.GenerateRandomArray(parameters.td, 10, 20, parameters.qViagens);
+            parameters.td = CrossCutting.GenerateRandomDoubleArray(10, 20, parameters.qViagens);
             parameters.td[0] = 0;
 
-            CrossCutting.GenerateRandomArray(parameters.tmaxvc, 120, 120, parameters.qViagens);
+            parameters.tmaxvc = CrossCutting.GenerateRandomDoubleArray(120, 120, parameters.qViagens);
             parameters.tmaxvc[0] = 0;
 
-            CrossCutting.GenerateRandomArray(parameters.hs, 360, 1200, parameters.qViagens);
+            parameters.hs = CrossCutting.GenerateRandomDoubleArray(360, 1200, parameters.qViagens);
             parameters.hs[0] = 0;
 
-            CrossCutting.GenerateMatrixRowsByColumns(parameters.f, 100, 140, 
+            parameters.f = CrossCutting.GenerateMatrixRowsByColumns(100, 140, 
                 parameters.qViagens, parameters.qPontosCarga);
             for (int i = 0; i < parameters.qPontosCarga; i++)
                 parameters.f[0][i] = 0;
 
-            CrossCutting.GenerateMatrixRowsByColumns(parameters.c, 40, 80, 
+            parameters.c = CrossCutting.GenerateMatrixRowsByColumns(40, 80, 
                 parameters.qViagens, parameters.qPontosCarga);
             for (int i = 0; i < parameters.qPontosCarga; i++)
                 parameters.c[0][i] = 0;
 
-            CrossCutting.Generate01MatrixRowsByColumnsByIntervals(parameters.pb, parameters.qPontosCarga, 
+            parameters.pb = CrossCutting.Generate01MatrixRowsByColumnsByIntervals(parameters.qPontosCarga, 
                 parameters.qBetoneiras);
 
             StreamWriter file = null;
