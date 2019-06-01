@@ -10,3 +10,4 @@ C:\Users\Richard Sobreiro\source\repos\ParetoFrontier_MDVRPTW\ParetoFrontier_MDV
 C:\Users\Richard Sobreiro\source\repos\ParetoFrontier_MDVRPTW\ParetoFrontier_MDVRPTW\obj\x64\Debug\ParetoFrontier_MDVRPTW.csproj.CopyComplete
 C:\Users\Richard Sobreiro\source\repos\ParetoFrontier_MDVRPTW\ParetoFrontier_MDVRPTW\obj\x64\Debug\ParetoFrontier_MDVRPTW.exe
 C:\Users\Richard Sobreiro\source\repos\ParetoFrontier_MDVRPTW\ParetoFrontier_MDVRPTW\obj\x64\Debug\ParetoFrontier_MDVRPTW.pdb
+C:\Users\Richard Sobreiro\source\repos\ParetoFrontier_MDVRPTW\ParetoFrontier_MDVRPTW\bin\x64\Debug\DataOptimizationStudio.dat

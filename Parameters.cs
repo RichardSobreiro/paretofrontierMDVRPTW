@@ -32,7 +32,8 @@
         }
 
         internal string dataFilename = "./Data.dat";
-        internal string outputDirectoty = "./Results";
+        internal string dataOptimizationStudio = "./DataOptimizationStudio.dat";
+        internal string outputDirectoty = "Results";
 
         internal int? qtdvnap; // Quantidade maxima de viagens nao atendidas
 

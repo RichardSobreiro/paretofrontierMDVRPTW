@@ -1,5 +1,7 @@
 ﻿using ILOG.Concert;
 using ILOG.CPLEX;
+using System;
+using System.Diagnostics;
 
 namespace ParetoFrontier_MDVRPTW
 {
@@ -55,6 +57,7 @@ namespace ParetoFrontier_MDVRPTW
 
                     //QuantidadeViagensNaoAtendidades:
                     //qtdvnap <= 30;
+                    cplex.AddLe(qtdvnap, parameters.qtdvnap.Value);
                     //qtdvnap == (qViagens - sum(v in I, p in K)(vp[v][p]));
                     ILinearNumExpr sumvp = cplex.LinearNumExpr();
                     for (int v = 0; v < parameters.qViagens; v++)
@@ -412,21 +415,24 @@ namespace ParetoFrontier_MDVRPTW
 
                     cplex.AddMaximize(profit);
 
-                    cplex.SetParam(Cplex.DoubleParam.TimeLimit, 10.0);
+                    cplex.SetOut(null);
 
+                    cplex.SetParam(Cplex.Param.MIP.Tolerances.MIPGap, 0.2);
+                    //cplex.SetParam(Cplex.DoubleParam.TimeLimit, 10.0);
+
+
+                    Stopwatch stopWatch = new Stopwatch();
+                    stopWatch.Start();
                     if (cplex.Solve())
                     {
-                        System.Console.WriteLine("Solution status = " + cplex.GetStatus());
-                        System.Console.WriteLine(" Optimal Value = " + cplex.ObjValue);
+                        stopWatch.Stop();
                         solutionReturn.Function1ObjValue = cplex.ObjValue;
                         solutionReturn.Function2ObjValue = cplex.GetValue(qtdvnap);
                     }
 
-                    if (cplex.GetStatus().Equals(Cplex.Status.Infeasible))
-                    {
-                        System.Console.WriteLine("No Solution");
-                    }
+                    TimeSpan ts = stopWatch.Elapsed;
 
+                    solutionReturn.ElapsedTimeToFindSolution = ts.TotalSeconds;
                     solutionReturn.Status = cplex.GetStatus();
 
                     cplex.End();

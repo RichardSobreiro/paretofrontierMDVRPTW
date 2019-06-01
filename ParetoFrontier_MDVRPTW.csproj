@@ -79,13 +79,16 @@
     <Reference Include="ILOG.CPLEX">
       <HintPath>..\..\..\..\..\..\Program Files\IBM\ILOG\CPLEX_Studio128\cplex\bin\x64_win64\ILOG.CPLEX.dll</HintPath>
     </Reference>
+    <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CrossCutting.cs" />
     <Compile Include="Methods\ERestricted.cs" />
     <Compile Include="Results\PrintResults.cs" />
     <Compile Include="SolutionReturn.cs" />
-    <None Include="DataOptimizationStudio.dat" />
+    <None Include="DataOptimizationStudio.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Compile Include="GenerateParameters.cs" />
     <Compile Include="InstanceProblemGenerator.cs" />
     <Compile Include="InputDataReader.cs" />

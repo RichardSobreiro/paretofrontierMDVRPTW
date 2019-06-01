@@ -350,7 +350,7 @@ namespace ParetoFrontier_MDVRPTW
             if(writeToDotnetDatFile.HasValue && writeToDotnetDatFile.Value
                 && dotnetDatFile != null)
             {
-                dotnetDatFile.Write(text);
+                dotnetDatFile.WriteLine(text);
             }
         }
 
@@ -361,7 +361,7 @@ namespace ParetoFrontier_MDVRPTW
             if (writeToOptimizationStudioDataFile.HasValue && writeToOptimizationStudioDataFile.Value
                 && optimizationStudioDataFile != null)
             {
-                optimizationStudioDataFile.Write(text);
+                optimizationStudioDataFile.WriteLine(text);
             }
         }
 

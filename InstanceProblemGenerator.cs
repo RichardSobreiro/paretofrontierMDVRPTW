@@ -48,10 +48,14 @@ namespace ParetoFrontier_MDVRPTW
                 File.WriteAllText(pathOptimizationStudioDataFile, string.Empty);
                 file = new StreamWriter(pathOptimizationStudioDataFile);
 
-                CrossCutting.WriteToOptimizationStudioDataFile($"qViagens = {parameters.qViagens};");
-                CrossCutting.WriteToOptimizationStudioDataFile($"qPontosCarga = {parameters.qPontosCarga};");
-                CrossCutting.WriteToOptimizationStudioDataFile($"qBetoneiras = {parameters.qBetoneiras};");
-                CrossCutting.WriteToOptimizationStudioDataFile($"M = {parameters.M};");
+                CrossCutting.WriteToOptimizationStudioDataFile($"qViagens = {parameters.qViagens};",
+                    writeToOptimizationStudioDataFile, file);
+                CrossCutting.WriteToOptimizationStudioDataFile($"qPontosCarga = {parameters.qPontosCarga};",
+                    writeToOptimizationStudioDataFile, file);
+                CrossCutting.WriteToOptimizationStudioDataFile($"qBetoneiras = {parameters.qBetoneiras};",
+                    writeToOptimizationStudioDataFile, file);
+                CrossCutting.WriteToOptimizationStudioDataFile($"M = {parameters.M};",
+                    writeToOptimizationStudioDataFile, file);
 
                 CrossCutting.WriteMatrixNxNToFile(file, parameters.dp, parameters.qViagens, 
                     parameters.qPontosCarga, "dp");

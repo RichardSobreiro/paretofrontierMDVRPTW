@@ -12,16 +12,14 @@ namespace ParetoFrontier_MDVRPTW.Results
             if (solutionReturns?.Count == 0)
                 return;
 
-            string filename = $@"{parameters.outputDirectoty}/
-                {solutionReturns[0].method.ToString()}-
-                {(sequenceNumber.HasValue ? sequenceNumber.Value : 0)}-
-                {DateTime.Now}";
+            var d = DateTime.Now;
+            string filename = $"ERestricted-{(sequenceNumber.HasValue ? sequenceNumber.Value : 0)}";
 
             StreamWriter file = new StreamWriter(filename);
 
             foreach(SolutionReturn solution in solutionReturns)
             {
-                file.WriteLine($"{solution.Function1ObjValue},{solution.Function2ObjValue}");
+                file.WriteLine($"{solution.Function1ObjValue},{solution.Function2ObjValue},{solution.ElapsedTimeToFindSolution}");
             }
 
             file.Close();

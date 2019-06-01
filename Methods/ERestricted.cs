@@ -8,7 +8,9 @@ namespace ParetoFrontier_MDVRPTW.Methods
         public static List<SolutionReturn> Solve(Parameters parameters)
         {
             List<SolutionReturn> solutionReturns = new List<SolutionReturn>();
-            InstanceProblemGenerator.Generate(parameters);
+            InstanceProblemGenerator.Generate(parameters, 
+                true, parameters.dataFilename,
+                true, parameters.dataOptimizationStudio);
 
             bool continueSolving = true;
             do

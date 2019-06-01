@@ -1,17 +1,20 @@
 ﻿using ParetoFrontier_MDVRPTW;
 using ParetoFrontier_MDVRPTW.Methods;
 using ParetoFrontier_MDVRPTW.Results;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 public class ParetoFrontier
 {
     public static void Main(string[] args)
     {
-        int qViagens = 50;
-        int qPontosCarga = 1;
-        int qBetoneiras = 1;
+        int qViagens = 60;
+        int qPontosCarga = 2;
+        int qBetoneiras = 3;
         int M = 10000;
-        int? qtdvnap = 50;
+        int? qtdvnap = qViagens;
         GenerateParetoFrontier(Method.E_RESTRICTED, qViagens, qPontosCarga, qBetoneiras, M, qtdvnap);
     }
 
@@ -21,6 +24,8 @@ public class ParetoFrontier
         Parameters parameters = new Parameters(qViagens, qPontosCarga, qBetoneiras, M, qtdvnap);
         List<SolutionReturn> solutionReturns = new List<SolutionReturn>();
 
+        Stopwatch stopWatch = new Stopwatch();
+        stopWatch.Start();
         switch (method)
         {
             case Method.E_RESTRICTED:
@@ -30,6 +35,11 @@ public class ParetoFrontier
                 solutionReturns = ERestricted.Solve(parameters);
                 break;
         }
+        stopWatch.Stop();
+        TimeSpan ts = stopWatch.Elapsed;
+        var totalElapsedTime = ts.TotalSeconds;
+
+        solutionReturns = solutionReturns.OrderBy(s => s.Function1ObjValue).ToList();
 
         PrintResults.PrintResultsToFile(solutionReturns, parameters);
     }
