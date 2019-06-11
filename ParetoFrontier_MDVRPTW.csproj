@@ -97,6 +97,7 @@
     <Compile Include="Parameters.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="Results\ERestricted-0.csv" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data.dat">
