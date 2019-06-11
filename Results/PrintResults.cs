@@ -13,13 +13,13 @@ namespace ParetoFrontier_MDVRPTW.Results
                 return;
 
             var d = DateTime.Now;
-            string filename = $"ERestricted-{(sequenceNumber.HasValue ? sequenceNumber.Value : 0)}";
+            string filename = $"ERestricted-{(sequenceNumber.HasValue ? sequenceNumber.Value : 0)}.csv";
 
             StreamWriter file = new StreamWriter(filename);
 
             foreach(SolutionReturn solution in solutionReturns)
             {
-                file.WriteLine($"{solution.Function1ObjValue},{solution.Function2ObjValue},{solution.ElapsedTimeToFindSolution}");
+                file.WriteLine($"{(int)solution.Function1ObjValue},{(int)solution.Function2ObjValue},{(int)solution.ElapsedTimeToFindSolution}");
             }
 
             file.Close();
