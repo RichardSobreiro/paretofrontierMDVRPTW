@@ -1,5 +1,6 @@
 ﻿using ILOG.CPLEX;
 using System.Collections.Generic;
+using System.IO;
 
 namespace ParetoFrontier_MDVRPTW.Methods
 {
@@ -12,24 +13,29 @@ namespace ParetoFrontier_MDVRPTW.Methods
                 true, parameters.dataFilename,
                 true, parameters.dataOptimizationStudio);
 
-            bool continueSolving = true;
+            parameters.somatorioAtrasos = 10000;
+            SolutionReturn solutionReturn = new SolutionReturn();
             do
             {    
-                SolutionReturn solutionReturn = MaximizeProfit.Solve(parameters);
+                solutionReturn = MaximizeProfit.Solve(parameters);
 
-                if(solutionReturn?.Status == Cplex.Status.Optimal && 
-                    solutionReturn.Function1ObjValue.HasValue && 
+                if(solutionReturn.Function1ObjValue.HasValue && 
                     solutionReturn.Function2ObjValue.HasValue)
                 {
                     solutionReturns.Add(solutionReturn);
-                }
-                else
-                {
-                    continueSolving = false;
+
+                    string filename = $"ERestricted.csv";
+
+                    StreamWriter file = new StreamWriter(filename);
+
+                    file.WriteLine($"{(int)solutionReturn.qtdvnap},{(int)solutionReturn.Function1ObjValue},{(int)solutionReturn.Function2ObjValue},{(int)solutionReturn.ElapsedTimeToFindSolution}");
+
+                    file.Close();
                 }
 
-                parameters.qtdvnap--;
-            } while (continueSolving);
+                parameters.somatorioAtrasos -= 500;
+            } while (parameters.somatorioAtrasos >= 0 && 
+                solutionReturn?.Status != Cplex.Status.Infeasible);
 
             return solutionReturns;
         }

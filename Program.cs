@@ -10,9 +10,9 @@ public class ParetoFrontier
 {
     public static void Main(string[] args)
     {
-        int qViagens = 60;
+        int qViagens = 40;
         int qPontosCarga = 2;
-        int qBetoneiras = 3;
+        int qBetoneiras = 2;
         int M = 10000;
         int? qtdvnap = qViagens;
         GenerateParetoFrontier(Method.E_RESTRICTED, qViagens, qPontosCarga, qBetoneiras, M, qtdvnap);

@@ -19,7 +19,7 @@ namespace ParetoFrontier_MDVRPTW.Results
 
             foreach(SolutionReturn solution in solutionReturns)
             {
-                file.WriteLine($"{(int)solution.Function1ObjValue},{(int)solution.Function2ObjValue},{(int)solution.ElapsedTimeToFindSolution}");
+                file.WriteLine($"{(int)solution.qtdvnap},{(int)solution.Function1ObjValue},{(int)solution.Function2ObjValue},{(int)solution.ElapsedTimeToFindSolution}");
             }
 
             file.Close();
