@@ -28,7 +28,7 @@ namespace ParetoFrontier_MDVRPTW
             parameters.hs = CrossCutting.GenerateRandomDoubleArray(360, 1200, parameters.qViagens);
             parameters.hs[0] = 0;
 
-            parameters.f = CrossCutting.GenerateMatrixRowsByColumns(80, 120, 
+            parameters.f = CrossCutting.GenerateMatrixRowsByColumns(40, 90, 
                 parameters.qViagens, parameters.qPontosCarga);
             for (int i = 0; i < parameters.qPontosCarga; i++)
                 parameters.f[0][i] = 0;

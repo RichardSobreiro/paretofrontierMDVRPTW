@@ -29,11 +29,11 @@ namespace ParetoFrontier_MDVRPTW
                     IIntVar[][] vb = new IIntVar[parameters.qViagens][];
 
                     IIntVar qtdvnap = cplex.IntVar(0, int.MaxValue, "qtdvnap");
-                    INumVar somatorioAtrasos = 
-                        cplex.NumVar(0.0,
-                        parameters.somatorioAtrasos.HasValue ? 
-                            parameters.somatorioAtrasos.Value : double.MaxValue, "somatorioAtrasos");
-                    cplex.Add(somatorioAtrasos);
+                    //INumVar somatorioAtrasos = 
+                    //    cplex.NumVar(0.0,
+                    //    parameters.somatorioAtrasos.HasValue ? 
+                    //        parameters.somatorioAtrasos.Value : double.MaxValue, "somatorioAtrasos");
+                    //cplex.Add(somatorioAtrasos);
 
                     for (var i = 0; i < parameters.qViagens; i++)
                     {
@@ -342,10 +342,10 @@ namespace ParetoFrontier_MDVRPTW
                         cplex.AddGe(sumB, sumP);
 
                         cplex.AddGe(atrc[i], cplex.Diff(hcc[i], parameters.hs[i]));
-                        //cplex.AddLe(atrc[i], cplex.Diff(hcc[i], parameters.hs[i]));
+                        cplex.AddLe(atrc[i], cplex.Diff(hcc[i], parameters.hs[i]));
 
                         cplex.AddGe(avnc[i], cplex.Diff(parameters.hs[i], hcc[i]));
-                        //cplex.AddLe(avnc[i], cplex.Diff(parameters.hs[i], hcc[i]));
+                        cplex.AddLe(avnc[i], cplex.Diff(parameters.hs[i], hcc[i]));
 
 
                         cplex.AddGe(atrp[i],
@@ -355,13 +355,13 @@ namespace ParetoFrontier_MDVRPTW
                                         cplex.ScalProd(vp[i], parameters.dv[i]),
                                         cplex.ScalProd(vp[i], parameters.dp[i]))),
                             tfp[i]));
-                        //cplex.AddLe(atrp[i],
-                        //    cplex.Diff(
-                        //        cplex.Diff(hcc[i],
-                        //            cplex.Sum(
-                        //                cplex.ScalProd(vp[i], parameters.dv[i]),
-                        //                cplex.ScalProd(vp[i], parameters.dp[i]))),
-                        //    tfp[i]));
+                        cplex.AddLe(atrp[i],
+                            cplex.Diff(
+                                cplex.Diff(hcc[i],
+                                    cplex.Sum(
+                                        cplex.ScalProd(vp[i], parameters.dv[i]),
+                                        cplex.ScalProd(vp[i], parameters.dp[i]))),
+                            tfp[i]));
 
                         cplex.AddGe(avnp[i],
                             cplex.Diff(
@@ -370,13 +370,13 @@ namespace ParetoFrontier_MDVRPTW
                                     cplex.ScalProd(vp[i], parameters.dp[i]),
                                     tfp[i]),
                                 hcc[i]));
-                        //cplex.AddLe(avnp[i],
-                        //    cplex.Diff(
-                        //        cplex.Sum(
-                        //            cplex.ScalProd(vp[i], parameters.dv[i]),
-                        //            cplex.ScalProd(vp[i], parameters.dp[i]),
-                        //            tfp[i]),
-                        //        hcc[i]));
+                        cplex.AddLe(avnp[i],
+                            cplex.Diff(
+                                cplex.Sum(
+                                    cplex.ScalProd(vp[i], parameters.dv[i]),
+                                    cplex.ScalProd(vp[i], parameters.dp[i]),
+                                    tfp[i]),
+                                hcc[i]));
                     }
                     //NaoNegatividadeDasVariaveisReais:
                     //forall(i in I){
@@ -393,7 +393,7 @@ namespace ParetoFrontier_MDVRPTW
                     //QuantidadeViagensNaoAtendidades:
                     //qtdvnap >= 40;
                     //qtdvnap == (qViagens - sum(v in I, p in K)(vp[v][p]));
-                    //cplex.AddLe(qtdvnap, parameters.qtdvnap.Value);
+                    cplex.AddLe(qtdvnap, parameters.qtdvnap.Value);
                     //qtdvnap == (qViagens - sum(v in I, p in K)(vp[v][p]));
                     ILinearNumExpr sumvp = cplex.LinearNumExpr();
                     for (int v = 0; v < parameters.qViagens; v++)
@@ -405,15 +405,15 @@ namespace ParetoFrontier_MDVRPTW
                     }
                     cplex.AddEq(qtdvnap, cplex.Diff(parameters.qViagens, sumvp));
 
-                    ILinearNumExpr sumatr = cplex.LinearNumExpr();
-                    for (int i = 0; i < parameters.qViagens; i++)
-                    {
-                        sumatr.AddTerm(1, atrc[i]);
-                        sumatr.AddTerm(1, avnc[i]);
-                        sumatr.AddTerm(1, atrp[i]);
-                        sumatr.AddTerm(1, avnp[i]);
-                    }
-                    cplex.AddEq(somatorioAtrasos, sumatr);
+                    //ILinearNumExpr sumatr = cplex.LinearNumExpr();
+                    //for (int i = 0; i < parameters.qViagens; i++)
+                    //{
+                    //    sumatr.AddTerm(1, atrc[i]);
+                    //    sumatr.AddTerm(1, avnc[i]);
+                    //    sumatr.AddTerm(1, atrp[i]);
+                    //    sumatr.AddTerm(1, avnp[i]);
+                    //}
+                    //cplex.AddEq(somatorioAtrasos, sumatr);
 
                     //maximize
                     //    sum(v in I, p in K)(vp[v][p] * (f[v][p] - c[v][p]));
@@ -434,15 +434,14 @@ namespace ParetoFrontier_MDVRPTW
                     cplex.SetParam(Cplex.Param.MIP.Tolerances.MIPGap, 0.1);
                     //cplex.SetParam(Cplex.DoubleParam.TimeLimit, 10.0);
 
-
                     Stopwatch stopWatch = new Stopwatch();
                     stopWatch.Start();
                     if (cplex.Solve())
                     {
                         stopWatch.Stop();
                         solutionReturn.Function1ObjValue = cplex.GetObjValue();
-                        solutionReturn.Function2ObjValue = cplex.GetValue(somatorioAtrasos);
-                        solutionReturn.qtdvnap = cplex.GetValue(qtdvnap);
+                        //solutionReturn.Function2ObjValue = cplex.GetValue(somatorioAtrasos);
+                        solutionReturn.Function2ObjValue = cplex.GetValue(qtdvnap);
                     }
 
                     TimeSpan ts = stopWatch.Elapsed;
@@ -451,9 +450,9 @@ namespace ParetoFrontier_MDVRPTW
                     solutionReturn.Status = cplex.GetStatus();
 
                     cplex.End();
-
-                    return solutionReturn;
                 }
+
+                return solutionReturn;
             }
             catch (ILOG.Concert.Exception exc)
             {
